@@ -34,6 +34,48 @@ body {
     background-size: var(--grid-size) var(--grid-size);
 }
 
+/* 开场动画 */
+.opening-scene {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    animation: fadeIn 2s ease-in-out;
+}
+
+/* 故事章节样式 */
+.story-chapters {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    min-height: 400px;
+    position: relative;
+}
+
+.chapter {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease-in-out;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: rgba(30, 30, 30, 0.9);
+    border: var(--pixel-size) solid var(--primary-color);
+}
+
+.chapter.active {
+    opacity: 1;
+    transform: translateY(0);
+    position: relative;
+}
+
 /* 物理披萨样式 */
 .physics-pizza {
     position: fixed;
@@ -48,81 +90,7 @@ body {
     transition: transform 0.1s linear;
 }
 
-/* 像素风格背景装饰 */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-        radial-gradient(circle at 20% 20%, rgba(255, 107, 107, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(255, 230, 109, 0.05) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: -1;
-}
-
-/* 像素风格边框装饰 */
-.pixel-border {
-    border: var(--pixel-size) solid var(--primary-color);
-    position: relative;
-    background: var(--background-color);
-    box-shadow: calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 2) 0 rgba(0,0,0,0.5);
-}
-
-.pixel-border::before {
-    content: '';
-    position: absolute;
-    top: calc(var(--pixel-size) * -2);
-    left: calc(var(--pixel-size) * -2);
-    right: calc(var(--pixel-size) * -2);
-    bottom: calc(var(--pixel-size) * -2);
-    background: 
-        linear-gradient(45deg, transparent 48%, var(--primary-color) 49%, var(--primary-color) 51%, transparent 52%),
-        linear-gradient(-45deg, transparent 48%, var(--primary-color) 49%, var(--primary-color) 51%, transparent 52%);
-    background-size: 20px 20px;
-    z-index: -1;
-    opacity: 0.3;
-}
-
-/* 像素风格动画 */
-@keyframes bgMove {
-    0% {
-        background-position: 0 0, 0 0, 0 0, 0 0, 20px 20px, 20px 20px;
-    }
-    100% {
-        background-position: 20px 20px, 20px 20px, 40px 40px, 40px 40px, 60px 60px, 60px 60px;
-    }
-}
-
-/* 像素容器样式 */
-.pixel-container {
-    border: var(--pixel-size) solid var(--primary-color);
-    background-color: var(--background-color);
-    padding: 16px;
-    margin: 8px;
-}
-
-.pixel-container::before {
-    content: '';
-    position: absolute;
-    top: -8px;
-    left: -8px;
-    right: -8px;
-    bottom: -8px;
-    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-    z-index: -1;
-    animation: borderGlow 2s linear infinite;
-}
-
-@keyframes borderGlow {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-}
-
-/* 像素文字效果 */
+/* 像素风格标题 */
 .pixel-text {
     font-family: 'Press Start 2P', 'Pixel Emulator', monospace;
     color: var(--primary-color);
@@ -141,68 +109,7 @@ body::before {
     text-transform: none;
 }
 
-.pixel-text::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 100%;
-    height: var(--pixel-size);
-    background: var(--primary-color);
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-}
-
-.pixel-text:hover::after {
-    transform: scaleX(1);
-}
-
-.glitch-text {
-    position: relative;
-    animation: glitch 1s linear infinite;
-}
-
-.glitch-text::before,
-.glitch-text::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.glitch-text::before {
-    left: 2px;
-    text-shadow: -2px 0 var(--primary-color);
-    animation: glitch-anim-1 2s infinite linear alternate-reverse;
-}
-
-.glitch-text::after {
-    left: -2px;
-    text-shadow: 2px 0 var(--secondary-color);
-    animation: glitch-anim-2 3s infinite linear alternate-reverse;
-}
-
-@keyframes glitch-anim-1 {
-    0% { clip-path: inset(20% 0 30% 0); }
-    20% { clip-path: inset(60% 0 10% 0); }
-    40% { clip-path: inset(40% 0 50% 0); }
-    60% { clip-path: inset(80% 0 5% 0); }
-    80% { clip-path: inset(10% 0 70% 0); }
-    100% { clip-path: inset(30% 0 20% 0); }
-}
-
-@keyframes glitch-anim-2 {
-    0% { clip-path: inset(15% 0 35% 0); }
-    20% { clip-path: inset(55% 0 15% 0); }
-    40% { clip-path: inset(45% 0 45% 0); }
-    60% { clip-path: inset(75% 0 10% 0); }
-    80% { clip-path: inset(15% 0 65% 0); }
-    100% { clip-path: inset(25% 0 25% 0); }
-}
-
-/* 按钮样式 */
+/* 像素风格按钮 */
 .pixel-button {
     display: inline-block;
     padding: 8px 16px;
@@ -215,11 +122,13 @@ body::before {
     cursor: pointer;
     transition: all 0.2s ease;
     letter-spacing: 1px;
+    margin: 10px 0;
 }
 
 .pixel-button:hover {
     background-color: var(--primary-color);
     color: var(--background-color);
+    transform: scale(1.05);
 }
 
 /* 像素风格容器 */
@@ -229,6 +138,47 @@ body::before {
     padding: 16px;
     margin: 8px;
     text-align: center;
+}
+
+/* 倒计时样式 */
+.countdown {
+    margin: 20px 0;
+    padding: 10px;
+    border: var(--pixel-size) solid var(--secondary-color);
+    background: rgba(30, 30, 30, 0.9);
+}
+
+#timer {
+    font-size: 1.2em;
+    color: var(--accent-color);
+    margin-top: 10px;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from { 
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to { 
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.glitch-text {
+    animation: glitch 1s infinite;
 }
 
 /* 响应式设计 */
@@ -245,6 +195,10 @@ body::before {
     .pixel-text.secondary {
         font-size: 1.2em;
     }
+    
+    .story-chapters {
+        padding: 10px;
+    }
 }
 
 /* 英雄区域样式 */
@@ -259,16 +213,6 @@ body::before {
     font-size: 2.5em;
     margin-bottom: 20px;
     color: var(--accent-color);
-}
-
-.countdown {
-    margin-bottom: 30px;
-}
-
-#timer {
-    font-size: 1.5em;
-    color: var(--accent-color);
-    margin-top: 10px;
 }
 
 .floating-pizzas {
@@ -385,4 +329,9 @@ footer {
 @keyframes rotate {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }

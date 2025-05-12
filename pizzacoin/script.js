@@ -1,5 +1,28 @@
 // 等待DOM加载完成
 document.addEventListener("DOMContentLoaded", () => {
+    // 绑定开始故事按钮事件
+    const startButton = document.querySelector('.opening-scene .pixel-button');
+    if (startButton) {
+        startButton.addEventListener('click', startStory);
+    }
+
+    // 绑定所有章节按钮的点击事件
+    document.querySelectorAll('.chapter .pixel-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const currentChapter = this.closest('.chapter');
+            const currentChapterNumber = parseInt(currentChapter.id.replace('chapter', ''));
+            const totalChapters = document.querySelectorAll('.chapter').length;
+            
+            if (currentChapterNumber === totalChapters) {
+                // 最后一章，连接钱包
+                connectWallet();
+            } else {
+                // 显示下一章
+                showNextChapter(currentChapterNumber + 1);
+            }
+        });
+    });
+
     // 物理移动披萨
     const pizza = document.querySelector('#physics-pizza');
     if (!pizza) {
@@ -8,76 +31,124 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 物理参数
-    let posX = window.innerWidth / 2;
-    let posY = window.innerHeight / 2;
-    let velocityX = 3;  // 初始水平速度
-    let velocityY = 3;  // 初始垂直速度
-    const targetSpeed = 3;  // 目标速度
+    let posX = Math.random() * (window.innerWidth - 100);
+    let posY = Math.random() * (window.innerHeight - 100);
+    let speedX = 2;
+    let speedY = 2;
 
-    function updatePizza() {
+    function updatePizzaPosition() {
         // 更新位置
-        posX += velocityX;
-        posY += velocityY;
-        
-        // 获取窗口尺寸
-        const pizzaRect = pizza.getBoundingClientRect();
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
+        posX += speedX;
+        posY += speedY;
 
         // 碰撞检测
-        if (posX <= 0) {
-            posX = 0;
-            velocityX = Math.abs(velocityX);  // 向右反弹
-        } else if (posX + pizzaRect.width >= windowWidth) {
-            posX = windowWidth - pizzaRect.width;
-            velocityX = -Math.abs(velocityX);  // 向左反弹
+        if (posX <= 0 || posX >= window.innerWidth - 100) {
+            speedX = -speedX;
+        }
+        if (posY <= 0 || posY >= window.innerHeight - 100) {
+            speedY = -speedY;
         }
 
-        if (posY <= 0) {
-            posY = 0;
-            velocityY = Math.abs(velocityY);  // 向下反弹
-        } else if (posY + pizzaRect.height >= windowHeight) {
-            posY = windowHeight - pizzaRect.height;
-            velocityY = -Math.abs(velocityY);  // 向上反弹
-        }
-
-        // 计算旋转角度，使披萨跟随运动方向
-        const rotation = Math.atan2(velocityY, velocityX) * (180 / Math.PI);
-        
-        // 应用变换
-        pizza.style.transform = `translate(${posX}px, ${posY}px) rotate(${rotation}deg)`;
-        
-        // 继续动画
-        requestAnimationFrame(updatePizza);
+        // 应用位置
+        pizza.style.transform = `translate(${posX}px, ${posY}px) rotate(${posX * 0.1}deg)`;
+        requestAnimationFrame(updatePizzaPosition);
     }
 
-    // 开始动画
-    updatePizza();
+    // 启动披萨动画
+    updatePizzaPosition();
 
-    // 窗口大小改变时重置位置
+    // 窗口大小改变时重置披萨位置
     window.addEventListener('resize', () => {
-        posX = Math.min(posX, window.innerWidth - pizza.getBoundingClientRect().width);
-        posY = Math.min(posY, window.innerHeight - pizza.getBoundingClientRect().height);
+        if (posX > window.innerWidth - 100) posX = window.innerWidth - 100;
+        if (posY > window.innerHeight - 100) posY = window.innerHeight - 100;
     });
 
     // 倒计时功能
     function updateCountdown() {
-        const pizzaDay = new Date('2024-05-22T00:00:00');
-        const now = new Date();
-        const diff = pizzaDay - now;
+        const pizzaDay = new Date('May 22, 2024 00:00:00').getTime();
+        const now = new Date().getTime();
+        const distance = pizzaDay - now;
 
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        document.getElementById('timer').textContent = 
-            `${days}天 ${hours}小时 ${minutes}分 ${seconds}秒`;
+        const timerElement = document.getElementById('timer');
+        if (timerElement) {
+            timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+            if (distance < 0) {
+                timerElement.innerHTML = "PIZZA DAY IS HERE!";
+            }
+        }
     }
 
     // 每秒更新倒计时
     setInterval(updateCountdown, 1000);
     updateCountdown();
+
+    // 故事控制
+    function startStory() {
+        console.log('开始故事'); // 调试日志
+        const openingScene = document.querySelector('.opening-scene');
+        const storyChapters = document.querySelector('.story-chapters');
+        
+        if (!openingScene || !storyChapters) {
+            console.error('找不到必要的DOM元素');
+            return;
+        }
+        
+        // 淡出开场动画
+        openingScene.style.opacity = '0';
+        openingScene.style.transition = 'opacity 0.5s ease-out';
+        
+        setTimeout(() => {
+            openingScene.style.display = 'none';
+            storyChapters.style.display = 'block';
+            showNextChapter(1);
+        }, 500);
+    }
+
+    function showNextChapter(chapterNumber) {
+        console.log('显示章节:', chapterNumber); // 调试日志
+        // 获取所有章节
+        const chapters = document.querySelectorAll('.chapter');
+        const currentChapter = document.getElementById(`chapter${chapterNumber}`);
+        
+        if (!currentChapter) {
+            console.error('找不到章节:', chapterNumber);
+            return;
+        }
+        
+        // 隐藏所有章节
+        chapters.forEach(chapter => {
+            chapter.style.display = 'none';
+            chapter.classList.remove('active');
+        });
+        
+        // 显示新章节
+        currentChapter.style.display = 'block';
+        
+        // 触发重排以启动动画
+        void currentChapter.offsetWidth;
+        
+        // 添加active类来触发动画
+        currentChapter.classList.add('active');
+        
+        // 更新按钮状态
+        updateNavigationButtons(chapterNumber);
+    }
+
+    function updateNavigationButtons(currentChapter) {
+        const totalChapters = document.querySelectorAll('.chapter').length;
+        
+        // 更新"继续"按钮文本
+        const continueButton = document.querySelector(`#chapter${currentChapter} .pixel-button`);
+        if (continueButton) {
+            continueButton.textContent = currentChapter === totalChapters ? 'Join The Revolution' : 'Continue';
+        }
+    }
 
     // 按钮悬停效果
     document.querySelectorAll(".pixel-button").forEach(button => {
@@ -206,4 +277,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 每3秒生成一个新的披萨表情
     setInterval(createRandomPizza, 3000);
+
+    // 钱包连接功能
+    function connectWallet() {
+        alert('Connecting to wallet...');
+        // 这里添加实际的钱包连接逻辑
+    }
+
+    // 添加键盘导航支持
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'Enter') {
+            const activeChapter = document.querySelector('.chapter.active');
+            if (activeChapter) {
+                const currentChapterNumber = parseInt(activeChapter.id.replace('chapter', ''));
+                if (currentChapterNumber < 3) {
+                    showNextChapter(currentChapterNumber + 1);
+                }
+            }
+        } else if (e.key === 'ArrowLeft') {
+            const activeChapter = document.querySelector('.chapter.active');
+            if (activeChapter) {
+                const currentChapterNumber = parseInt(activeChapter.id.replace('chapter', ''));
+                if (currentChapterNumber > 1) {
+                    showNextChapter(currentChapterNumber - 1);
+                }
+            }
+        }
+    });
 });

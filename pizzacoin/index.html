@@ -12,11 +12,56 @@
 </head>
 <body>
     <div id="physics-pizza" class="physics-pizza">🍕</div>
-    <div class="pixel-container">
-        <h1 class="pixel-text">PizzaCoin</h1>
-        <p class="pixel-text secondary">Gaming Ecosystem Platform</p>
-        <button class="pixel-button">Connect Wallet</button>
+    
+    <!-- 开场动画 -->
+    <div class="opening-scene">
+        <div class="pixel-container">
+            <h1 class="pixel-text glitch-text">PizzaCoin</h1>
+            <p class="pixel-text secondary">A Legendary Journey</p>
+            <button class="pixel-button" onclick="startStory()">Begin The Story</button>
+        </div>
     </div>
+
+    <!-- 故事章节 -->
+    <div class="story-chapters" style="display: none;">
+        <!-- 第一章：披萨的起源 -->
+        <div class="chapter" id="chapter1">
+            <div class="pixel-container">
+                <h2 class="pixel-text">Chapter 1: The Birth of Pizza</h2>
+                <p class="pixel-text secondary">In 1889, Queen Margherita of Italy tasted a special pie...</p>
+                <div class="interactive-element">
+                    <button class="pixel-button" onclick="showNextChapter(2)">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二章：国际披萨日 -->
+        <div class="chapter" id="chapter2" style="display: none;">
+            <div class="pixel-container">
+                <h2 class="pixel-text">Chapter 2: The Pizza Revolution</h2>
+                <p class="pixel-text secondary">May 22, 2024 - The Day Pizza Goes Digital</p>
+                <div class="countdown">
+                    <p class="pixel-text">Time Until Pizza Day:</p>
+                    <div id="timer" class="pixel-text"></div>
+                </div>
+                <div class="interactive-element">
+                    <button class="pixel-button" onclick="showNextChapter(3)">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三章：PizzaCoin的诞生 -->
+        <div class="chapter" id="chapter3" style="display: none;">
+            <div class="pixel-container">
+                <h2 class="pixel-text">Chapter 3: The Rise of PizzaCoin</h2>
+                <p class="pixel-text secondary">From Traditional Pizza to Digital Revolution</p>
+                <div class="interactive-element">
+                    <button class="pixel-button" onclick="connectWallet()">Join The Revolution</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
