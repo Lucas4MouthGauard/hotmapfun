@@ -1,0 +1,388 @@
+/* 基础变量 */
+:root {
+    --primary-color: #FF4C29;    /* 鲜亮橙色 */
+    --secondary-color: #FF9C00;  /* 亮黄橙 */
+    --background-color: #1E1E1E; /* 深灰接近黑色 */
+    --text-color: #FFFFFF;       /* 白色 */
+    --accent-color: #FFE66D;
+    --pixel-size: 1px;           /* 网格线宽度 */
+    --grid-color: #3C3C3C;       /* 浅灰色网格 */
+    --grid-size: 8px;            /* 网格大小 */
+}
+
+/* 字体引入 */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+/* 重置样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Press Start 2P', 'VT323', 'Pixel Emulator', 'Minecraft', monospace;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+    /* 创建像素网格背景 */
+    background-image: 
+        linear-gradient(var(--grid-color) var(--pixel-size), transparent var(--pixel-size)),
+        linear-gradient(90deg, var(--grid-color) var(--pixel-size), transparent var(--pixel-size));
+    background-size: var(--grid-size) var(--grid-size);
+}
+
+/* 物理披萨样式 */
+.physics-pizza {
+    position: fixed;
+    font-size: 4em;
+    z-index: 1000;
+    user-select: none;
+    pointer-events: none;
+    text-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+    filter: drop-shadow(0 0 10px rgba(255, 76, 41, 0.3));
+    will-change: transform;
+    transform-origin: center center;
+    transition: transform 0.1s linear;
+}
+
+/* 像素风格背景装饰 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(255, 107, 107, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(255, 230, 109, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* 像素风格边框装饰 */
+.pixel-border {
+    border: var(--pixel-size) solid var(--primary-color);
+    position: relative;
+    background: var(--background-color);
+    box-shadow: calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 2) 0 rgba(0,0,0,0.5);
+}
+
+.pixel-border::before {
+    content: '';
+    position: absolute;
+    top: calc(var(--pixel-size) * -2);
+    left: calc(var(--pixel-size) * -2);
+    right: calc(var(--pixel-size) * -2);
+    bottom: calc(var(--pixel-size) * -2);
+    background: 
+        linear-gradient(45deg, transparent 48%, var(--primary-color) 49%, var(--primary-color) 51%, transparent 52%),
+        linear-gradient(-45deg, transparent 48%, var(--primary-color) 49%, var(--primary-color) 51%, transparent 52%);
+    background-size: 20px 20px;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+/* 像素风格动画 */
+@keyframes bgMove {
+    0% {
+        background-position: 0 0, 0 0, 0 0, 0 0, 20px 20px, 20px 20px;
+    }
+    100% {
+        background-position: 20px 20px, 20px 20px, 40px 40px, 40px 40px, 60px 60px, 60px 60px;
+    }
+}
+
+/* 像素容器样式 */
+.pixel-container {
+    border: var(--pixel-size) solid var(--primary-color);
+    background-color: var(--background-color);
+    padding: 16px;
+    margin: 8px;
+}
+
+.pixel-container::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    z-index: -1;
+    animation: borderGlow 2s linear infinite;
+}
+
+@keyframes borderGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* 像素文字效果 */
+.pixel-text {
+    font-family: 'Press Start 2P', 'Pixel Emulator', monospace;
+    color: var(--primary-color);
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 1.2em;
+    line-height: 1.4;
+}
+
+.pixel-text.secondary {
+    font-family: 'VT323', monospace;
+    color: var(--secondary-color);
+    font-size: 1.4em;
+    letter-spacing: 2px;
+    text-transform: none;
+}
+
+.pixel-text::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: var(--pixel-size);
+    background: var(--primary-color);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.pixel-text:hover::after {
+    transform: scaleX(1);
+}
+
+.glitch-text {
+    position: relative;
+    animation: glitch 1s linear infinite;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitch-text::before {
+    left: 2px;
+    text-shadow: -2px 0 var(--primary-color);
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+    left: -2px;
+    text-shadow: 2px 0 var(--secondary-color);
+    animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+    0% { clip-path: inset(20% 0 30% 0); }
+    20% { clip-path: inset(60% 0 10% 0); }
+    40% { clip-path: inset(40% 0 50% 0); }
+    60% { clip-path: inset(80% 0 5% 0); }
+    80% { clip-path: inset(10% 0 70% 0); }
+    100% { clip-path: inset(30% 0 20% 0); }
+}
+
+@keyframes glitch-anim-2 {
+    0% { clip-path: inset(15% 0 35% 0); }
+    20% { clip-path: inset(55% 0 15% 0); }
+    40% { clip-path: inset(45% 0 45% 0); }
+    60% { clip-path: inset(75% 0 10% 0); }
+    80% { clip-path: inset(15% 0 65% 0); }
+    100% { clip-path: inset(25% 0 25% 0); }
+}
+
+/* 按钮样式 */
+.pixel-button {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border: var(--pixel-size) solid var(--primary-color);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 1px;
+}
+
+.pixel-button:hover {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+}
+
+/* 像素风格容器 */
+.pixel-container {
+    border: var(--pixel-size) solid var(--primary-color);
+    background-color: var(--background-color);
+    padding: 16px;
+    margin: 8px;
+    text-align: center;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .pixel-button {
+        font-size: 0.7em;
+        padding: 6px 12px;
+    }
+    
+    .pixel-text {
+        font-size: 1em;
+    }
+    
+    .pixel-text.secondary {
+        font-size: 1.2em;
+    }
+}
+
+/* 英雄区域样式 */
+#hero {
+    text-align: center;
+    padding: 60px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+#hero h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: var(--accent-color);
+}
+
+.countdown {
+    margin-bottom: 30px;
+}
+
+#timer {
+    font-size: 1.5em;
+    color: var(--accent-color);
+    margin-top: 10px;
+}
+
+.floating-pizzas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.pizza-emoji {
+    position: absolute;
+    font-size: 2em;
+    animation: float 6s ease-in-out infinite;
+}
+
+.pizza-emoji:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+.pizza-emoji:nth-child(2) { top: 40%; right: 15%; animation-delay: 2s; }
+.pizza-emoji:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 4s; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+/* 特性网格样式 */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 30px;
+    border: var(--pixel-size) solid var(--secondary-color);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.feature-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+/* Meme卡片样式 */
+.meme-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.meme-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.meme-card:hover {
+    transform: scale(1.05);
+}
+
+.meme-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+/* 事实网格样式 */
+.facts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.fact-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.fact-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* 页脚样式 */
+footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    border-top: var(--pixel-size) solid var(--primary-color);
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
