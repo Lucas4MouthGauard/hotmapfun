@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const totalChapters = document.querySelectorAll('.chapter').length;
             
             if (currentChapterNumber === totalChapters) {
-                // 最后一章，连接钱包
-                connectWallet();
+                // 最后一章，跳转到 coin.html
+                window.location.href = 'coin.html';
             } else {
                 // 显示下一章
                 showNextChapter(currentChapterNumber + 1);
@@ -278,12 +278,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // 每3秒生成一个新的披萨表情
     setInterval(createRandomPizza, 3000);
 
-    // 钱包连接功能
-    function connectWallet() {
-        alert('Connecting to wallet...');
-        // 这里添加实际的钱包连接逻辑
-    }
-
     // 添加键盘导航支持
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'Enter') {
@@ -292,6 +286,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const currentChapterNumber = parseInt(activeChapter.id.replace('chapter', ''));
                 if (currentChapterNumber < 3) {
                     showNextChapter(currentChapterNumber + 1);
+                } else {
+                    window.location.href = 'coin.html';
                 }
             }
         } else if (e.key === 'ArrowLeft') {
