@@ -38,6 +38,8 @@ function App() {
   const homeRef = useRef(null);
   // eslint-disable-next-line no-unused-vars
   const [value, setValue] = useState(0);
+  const [showCopyTooltip, setShowCopyTooltip] = useState(false);
+  const [copiedAddress, setCopiedAddress] = useState(null);
 
   const modeBackgrounds = {
     '模式1-入职': '/images/onboarding.png',
@@ -85,6 +87,12 @@ function App() {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleCopyAddress = (address) => {
+    navigator.clipboard.writeText(address);
+    setCopiedAddress(address);
+    setTimeout(() => setCopiedAddress(null), 1500);
+  };
+
   return (
     <Box sx={{ 
       display: 'flex', 
@@ -102,10 +110,15 @@ function App() {
         boxShadow: 3,
         zIndex: 1200
       }}>
-        <Toolbar sx={{ justifyContent: 'flex-end' }}>
-          <Button color="inherit" onClick={() => scrollToSection(homeRef)} sx={{ fontFamily: 'Press Start 2P, cursive', mx: 1 }}>Home</Button>
-          <Button color="inherit" onClick={() => scrollToSection(buildRef)} sx={{ fontFamily: 'Press Start 2P, cursive', mx: 1 }}>Build</Button>
-          <Button color="inherit" onClick={() => scrollToSection(collaborateRef)} sx={{ fontFamily: 'Press Start 2P, cursive', mx: 1 }}>Collaborate</Button>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Typography variant="h6" sx={{ color: '#FFD700', fontFamily: 'Press Start 2P, cursive' }}>
+            十九的玩梗小屋🌟
+          </Typography>
+          <Box>
+            <Button color="inherit" onClick={() => scrollToSection(homeRef)} sx={{ fontFamily: 'Press Start 2P, cursive', mx: 1 }}>Home</Button>
+            <Button color="inherit" onClick={() => scrollToSection(buildRef)} sx={{ fontFamily: 'Press Start 2P, cursive', mx: 1 }}>Build</Button>
+            <Button color="inherit" onClick={() => scrollToSection(collaborateRef)} sx={{ fontFamily: 'Press Start 2P, cursive', mx: 1 }}>Collaborate</Button>
+          </Box>
         </Toolbar>
       </AppBar>
 
@@ -334,10 +347,10 @@ function App() {
                 创作不泳衣，感谢打赏～
               </Typography>
               <Typography variant="body1" gutterBottom sx={{ color: '#555' }}>
-                EVM 地址：<span onClick={() => navigator.clipboard.writeText('0x73ba1d3da1a577dc1f5daea2e962d70457e74543')} style={{ cursor: 'pointer', textDecoration: 'underline', color: '#007BFF' }}>0x73ba1d3da1a577dc1f5daea2e962d70457e74543</span>
+                EVM 地址：<span onClick={() => handleCopyAddress('0x73ba1d3da1a577dc1f5daea2e962d70457e74543')} style={{ cursor: 'pointer', textDecoration: 'underline', color: '#007BFF', backgroundColor: copiedAddress === '0x73ba1d3da1a577dc1f5daea2e962d70457e74543' ? 'rgba(0, 123, 255, 0.2)' : 'transparent', transition: 'background-color 0.3s' }}>0x73ba1d3da1a577dc1f5daea2e962d70457e74543</span>
               </Typography>
               <Typography variant="body1" gutterBottom sx={{ color: '#555' }}>
-                SOL 地址：<span onClick={() => navigator.clipboard.writeText('GErytsX7HgLskrnG9xsBSJMADwYb8QofSRXzmzWQMvFn')} style={{ cursor: 'pointer', textDecoration: 'underline', color: '#007BFF' }}>GErytsX7HgLskrnG9xsBSJMADwYb8QofSRXzmzWQMvFn</span>
+                SOL 地址：<span onClick={() => handleCopyAddress('GErytsX7HgLskrnG9xsBSJMADwYb8QofSRXzmzWQMvFn')} style={{ cursor: 'pointer', textDecoration: 'underline', color: '#007BFF', backgroundColor: copiedAddress === 'GErytsX7HgLskrnG9xsBSJMADwYb8QofSRXzmzWQMvFn' ? 'rgba(0, 123, 255, 0.2)' : 'transparent', transition: 'background-color 0.3s' }}>GErytsX7HgLskrnG9xsBSJMADwYb8QofSRXzmzWQMvFn</span>
               </Typography>
             </Box>
           </Container>
