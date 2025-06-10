@@ -82,8 +82,32 @@ function App() {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <AppBar position="fixed" sx={{ backgroundColor: 'white', color: 'black', boxShadow: 2 }}>
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      minHeight: '100vh',
+      backgroundImage: 'url(/images/pyramid-scene.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed',
+      position: 'relative',
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        zIndex: 0
+      }
+    }}>
+      <AppBar position="fixed" sx={{ 
+        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+        color: 'black', 
+        boxShadow: 2,
+        zIndex: 1
+      }}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
             BN Offers
@@ -96,9 +120,14 @@ function App() {
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ pt: 8 }}>
+      <Box sx={{ pt: 8, position: 'relative', zIndex: 1 }}>
         {/* Home Section */}
-        <Box ref={memeRef} sx={{ minHeight: '100vh', py: 4 }}>
+        <Box ref={memeRef} sx={{ 
+          minHeight: '100vh', 
+          py: 4,
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(5px)'
+        }}>
           <Container maxWidth="lg">
             <Typography variant="h4" component="h1" align="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold', color: '#333' }}>
               头像生成器
@@ -270,7 +299,12 @@ function App() {
         </Box>
 
         {/* Build Section */}
-        <Box ref={buildRef} sx={{ minHeight: '100vh', py: 4, bgcolor: '#f5f5f5' }}>
+        <Box ref={buildRef} sx={{ 
+          minHeight: '100vh', 
+          py: 4, 
+          backgroundColor: 'rgba(245, 245, 245, 0.95)',
+          backdropFilter: 'blur(5px)'
+        }}>
           <Container maxWidth="lg">
             <Typography variant="h4" component="h1" align="center" gutterBottom>
               构建页面
@@ -279,7 +313,12 @@ function App() {
         </Box>
 
         {/* Collaborate Section */}
-        <Box ref={collaborateRef} sx={{ minHeight: '100vh', py: 4 }}>
+        <Box ref={collaborateRef} sx={{ 
+          minHeight: '100vh', 
+          py: 4,
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(5px)'
+        }}>
           <Container maxWidth="lg">
             <Typography variant="h4" component="h1" align="center" gutterBottom>
               协作页面
