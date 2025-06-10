@@ -34,6 +34,7 @@ function App() {
   const memeRef = useRef(null);
   const buildRef = useRef(null);
   const collaborateRef = useRef(null);
+  const homeRef = useRef(null);
 
   const modeBackgrounds = {
     '模式1-入职': '/images/onboarding.png',
@@ -81,6 +82,10 @@ function App() {
     window.open('https://twitter.com/nineteen_888', '_blank');
   };
 
+  const scrollToSection = (ref) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <Box sx={{ 
       display: 'flex', 
@@ -91,42 +96,29 @@ function App() {
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
       position: 'relative',
-      '&::before': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        zIndex: 0
-      }
     }}>
       <AppBar position="fixed" sx={{ 
-        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-        color: 'black', 
-        boxShadow: 2,
-        zIndex: 1
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        backdropFilter: 'blur(5px)',
+        zIndex: 1200
       }}>
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
-            BN Offers
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Meme Generator
           </Typography>
-          <Tabs sx={{ minHeight: 64 }}>
-            <Tab label="Home" onClick={() => handleTabClick(memeRef)} />
-            <Tab label="Build" onClick={() => handleTabClick(buildRef)} />
-            <Tab label="Collaborate" onClick={() => handleTabClick(collaborateRef)} />
-          </Tabs>
+          <Button color="inherit" onClick={() => scrollToSection(homeRef)}>Home</Button>
+          <Button color="inherit" onClick={() => scrollToSection(buildRef)}>Build</Button>
+          <Button color="inherit" onClick={() => scrollToSection(collaborateRef)}>Collaborate</Button>
         </Toolbar>
       </AppBar>
 
       <Box sx={{ pt: 8, position: 'relative', zIndex: 1 }}>
         {/* Home Section */}
-        <Box ref={memeRef} sx={{ 
+        <Box ref={homeRef} sx={{ 
           minHeight: '100vh', 
           py: 4,
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(5px)'
+          backgroundColor: 'transparent',
+          backdropFilter: 'none'
         }}>
           <Container maxWidth="lg">
             <Typography variant="h4" component="h1" align="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold', color: '#333' }}>
@@ -194,17 +186,20 @@ function App() {
                   <Button
                     variant="contained"
                     onClick={handleSubmitNickname}
-                    sx={{ 
-                      py: 1.5,
-                      px: 3,
-                      borderRadius: 2,
-                      boxShadow: 2,
+                    sx={{
+                      backgroundColor: '#4a90e2',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontWeight: 'bold',
+                      fontSize: '1.1rem',
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.2)',
                       '&:hover': {
-                        boxShadow: 4
+                        backgroundColor: '#357abd',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
                       }
                     }}
                   >
-                    提交昵称
+                    请输入您的昵称
                   </Button>
                 </Box>
               </Grid>
@@ -299,11 +294,11 @@ function App() {
         </Box>
 
         {/* Build Section */}
-        <Box ref={buildRef} sx={{ 
-          minHeight: '100vh', 
-          py: 4, 
-          backgroundColor: 'rgba(245, 245, 245, 0.95)',
-          backdropFilter: 'blur(5px)'
+        <Box sx={{
+          minHeight: '100vh',
+          py: 4,
+          backgroundColor: 'transparent',
+          backdropFilter: 'none'
         }}>
           <Container maxWidth="lg">
             <Typography variant="h4" component="h1" align="center" gutterBottom>
@@ -313,11 +308,11 @@ function App() {
         </Box>
 
         {/* Collaborate Section */}
-        <Box ref={collaborateRef} sx={{ 
-          minHeight: '100vh', 
+        <Box sx={{
+          minHeight: '100vh',
           py: 4,
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(5px)'
+          backgroundColor: 'transparent',
+          backdropFilter: 'none'
         }}>
           <Container maxWidth="lg">
             <Typography variant="h4" component="h1" align="center" gutterBottom>
