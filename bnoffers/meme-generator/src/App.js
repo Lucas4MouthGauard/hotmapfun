@@ -36,6 +36,8 @@ function App() {
   const buildRef = useRef(null);
   const collaborateRef = useRef(null);
   const homeRef = useRef(null);
+  // eslint-disable-next-line no-unused-vars
+  const [value, setValue] = useState(0);
 
   const modeBackgrounds = {
     '模式1-入职': '/images/onboarding.png',
@@ -419,6 +421,24 @@ function App() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <style>
+        {`
+          @keyframes swing {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-10deg); }
+            100% { transform: rotate(0deg); }
+          }
+        `}
+      </style>
+      <Box sx={{ position: 'fixed', bottom: 20, right: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2000 }}>
+        <img src="/images/swinging-image.png" alt="Swinging" style={{ width: 100, height: 100 }} />
+        <Button variant="contained" color="primary" onClick={() => { console.log('Button clicked'); setValue(2); scrollToSection(collaborateRef); }} sx={{ marginTop: 2 }}>
+          💰打赏作者
+        </Button>
+      </Box>
     </Box>
   );
 }
