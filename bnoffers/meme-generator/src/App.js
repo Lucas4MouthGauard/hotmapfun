@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Box, Button, Paper, Dialog, DialogTitle, DialogContent, List, ListItem, ListItemButton, ListItemText, TextField } from '@mui/material';
+import { Box, Button, Paper, Dialog, DialogTitle, DialogContent, List, ListItem, ListItemButton, ListItemText, TextField, Container, Typography, Grid } from '@mui/material';
 import html2canvas from 'html2canvas';
 
 function App() {
@@ -48,126 +48,198 @@ function App() {
   };
 
   return (
-    <Box sx={{ p: 3, maxWidth: 1200, margin: '0 auto' }}>
-      <Box sx={{ mb: 2, display: 'flex', gap: 2 }}>
-        <Button
-          variant="contained"
-          component="label"
-          sx={{ flex: 1 }}
-        >
-          上传头像
-          <input
-            type="file"
-            hidden
-            accept="image/*"
-            onChange={handleAvatarUpload}
-          />
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => setOpenDialog(true)}
-          sx={{ flex: 1 }}
-        >
-          选择模式
-        </Button>
-        <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
-          <TextField
-            placeholder="请输入您的昵称"
-            variant="outlined"
-            size="small"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            sx={{ flex: 1 }}
-          />
-          <Button
-            variant="contained"
-            onClick={handleSubmitNickname}
-            sx={{ flex: 0.5 }}
-          >
-            提交昵称
-          </Button>
-        </Box>
-      </Box>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Typography variant="h4" component="h1" align="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold', color: '#333' }}>
+        头像生成器
+      </Typography>
 
-      <Paper
-        ref={memeRef}
-        sx={{
-          position: 'relative',
-          width: '66.67%',
-          paddingBottom: '37.5%',
-          margin: '0 auto',
-          overflow: 'hidden',
-          backgroundColor: '#f5f5f5'
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={4}>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            gap: 2,
+            position: 'sticky',
+            top: 20
+          }}>
+            <Button
+              variant="contained"
+              component="label"
+              sx={{ 
+                py: 1.5,
+                px: 3,
+                borderRadius: 2,
+                boxShadow: 2,
+                '&:hover': {
+                  boxShadow: 4
+                }
+              }}
+            >
+              上传头像
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={handleAvatarUpload}
+              />
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => setOpenDialog(true)}
+              sx={{ 
+                py: 1.5,
+                px: 3,
+                borderRadius: 2,
+                boxShadow: 2,
+                '&:hover': {
+                  boxShadow: 4
+                }
+              }}
+            >
+              选择模式
+            </Button>
+            <TextField
+              placeholder="请输入您的昵称"
+              variant="outlined"
+              size="small"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              sx={{ 
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  boxShadow: 1
+                }
+              }}
+            />
+            <Button
+              variant="contained"
+              onClick={handleSubmitNickname}
+              sx={{ 
+                py: 1.5,
+                px: 3,
+                borderRadius: 2,
+                boxShadow: 2,
+                '&:hover': {
+                  boxShadow: 4
+                }
+              }}
+            >
+              提交昵称
+            </Button>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} md={8}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Paper
+              ref={memeRef}
+              sx={{
+                position: 'relative',
+                width: '533.36%',
+                paddingBottom: '300%',
+                margin: '0 auto',
+                overflow: 'hidden',
+                backgroundColor: '#f5f5f5',
+                borderRadius: 4,
+                boxShadow: 4
+              }}
+            >
+              {background && (
+                <img
+                  src={background}
+                  alt="背景"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
+                  }}
+                />
+              )}
+              {avatar && (
+                <img
+                  src={avatar}
+                  alt="头像"
+                  style={{
+                    position: 'absolute',
+                    top: '20%',
+                    left: '15%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '133px',
+                    height: '133px',
+                    borderRadius: '50%',
+                    border: '4px solid white',
+                    boxShadow: '0 0 10px rgba(0,0,0,0.3)'
+                  }}
+                />
+              )}
+              {displayNickname && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '43%',
+                    left: '15%',
+                    transform: 'translate(-50%, -50%)',
+                    color: 'black',
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    textShadow: '2px 2px 4px rgba(255,255,255,0.5)',
+                    textAlign: 'center'
+                  }}
+                >
+                  {displayNickname}
+                </div>
+              )}
+            </Paper>
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleDownload}
+              disabled={!avatar || !background}
+              sx={{ 
+                mt: 4,
+                py: 1.5,
+                px: 4,
+                borderRadius: 2,
+                boxShadow: 2,
+                '&:hover': {
+                  boxShadow: 4
+                }
+              }}
+            >
+              Free Mint
+            </Button>
+          </Box>
+        </Grid>
+      </Grid>
+
+      <Dialog 
+        open={openDialog} 
+        onClose={() => setOpenDialog(false)}
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            boxShadow: 4
+          }
         }}
       >
-        {background && (
-          <img
-            src={background}
-            alt="背景"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover'
-            }}
-          />
-        )}
-        {avatar && (
-          <img
-            src={avatar}
-            alt="头像"
-            style={{
-              position: 'absolute',
-              top: '20%',
-              left: '15%',
-              transform: 'translate(-50%, -50%)',
-              width: '133px',
-              height: '133px',
-              borderRadius: '50%',
-              border: '4px solid white',
-              boxShadow: '0 0 10px rgba(0,0,0,0.3)'
-            }}
-          />
-        )}
-        {displayNickname && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '43%',
-              left: '15%',
-              transform: 'translate(-50%, -50%)',
-              color: 'black',
-              fontSize: '24px',
-              fontWeight: 'bold',
-              textShadow: '2px 2px 4px rgba(255,255,255,0.5)',
-              textAlign: 'center'
-            }}
-          >
-            {displayNickname}
-          </div>
-        )}
-      </Paper>
-
-      <Box sx={{ mt: 2, textAlign: 'center' }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleDownload}
-          disabled={!avatar || !background}
-        >
-          Free Mint
-        </Button>
-      </Box>
-
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>选择模式</DialogTitle>
+        <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>选择模式</DialogTitle>
         <DialogContent>
           <List>
             {Object.keys(modeBackgrounds).map((mode) => (
               <ListItem key={mode} disablePadding>
-                <ListItemButton onClick={() => handleModeSelect(mode)}>
+                <ListItemButton 
+                  onClick={() => handleModeSelect(mode)}
+                  sx={{
+                    borderRadius: 1,
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.04)'
+                    }
+                  }}
+                >
                   <ListItemText primary={mode} />
                 </ListItemButton>
               </ListItem>
@@ -175,7 +247,7 @@ function App() {
           </List>
         </DialogContent>
       </Dialog>
-    </Box>
+    </Container>
   );
 }
 
