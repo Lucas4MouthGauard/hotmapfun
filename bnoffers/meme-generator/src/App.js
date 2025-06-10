@@ -363,11 +363,14 @@ function App() {
         PaperProps={{
           sx: {
             borderRadius: 2,
-            boxShadow: 4
+            boxShadow: 4,
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            backdropFilter: 'blur(10px)',
+            padding: 2
           }
         }}
       >
-        <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>选择模式</DialogTitle>
+        <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold', color: '#333' }}>选择模式</DialogTitle>
         <DialogContent>
           <List>
             {Object.keys(modeBackgrounds).map((mode) => (
