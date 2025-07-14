@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .meme-text {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .heatmap-item {
+    transition: all 0.3s ease;
+  }
+  
+  .heatmap-item:hover {
+    transform: scale(1.05);
+    z-index: 10;
+  }
+  
+  .vote-button {
+    @apply px-4 py-2 rounded-lg font-semibold transition-all duration-200;
+  }
+  
+  .vote-button:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+  
+  .wallet-button {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl z-50 relative;
+  }
+
+  /* 自定义钱包按钮样式 */
+  .wallet-adapter-button {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl !important;
+    border: none !important;
+    font-family: inherit !important;
+    z-index: 50 !important;
+    position: relative !important;
+  }
+
+  .wallet-adapter-button-trigger {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl !important;
+    border: none !important;
+    font-family: inherit !important;
+    z-index: 50 !important;
+    position: relative !important;
+  }
+
+  /* 钱包下拉菜单样式 */
+  .wallet-adapter-dropdown {
+    @apply relative z-50;
+  }
+
+  .wallet-adapter-dropdown-list {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-xl !important;
+    z-index: 100 !important;
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    margin-top: 0.5rem !important;
+  }
+
+  .wallet-adapter-dropdown-list-item {
+    @apply text-white hover:bg-white/20 transition-colors !important;
+    padding: 0.75rem 1rem !important;
+    border: none !important;
+  }
+
+  /* 钱包模态框样式 */
+  .wallet-adapter-modal {
+    @apply z-[9999] !important;
+  }
+
+  .wallet-adapter-modal-wrapper {
+    @apply bg-black/50 backdrop-blur-sm !important;
+  }
+
+  .wallet-adapter-modal-container {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl !important;
+  }
+
+  .wallet-adapter-modal-title {
+    @apply text-white !important;
+  }
+
+  .wallet-adapter-modal-list {
+    @apply bg-transparent !important;
+  }
+
+  .wallet-adapter-modal-list-item {
+    @apply bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl !important;
+    margin-bottom: 0.5rem !important;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(45deg, #ff6b6b, #ffa726, #42a5f5, #7c4dff);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient 3s ease infinite;
+  }
+  
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+} 

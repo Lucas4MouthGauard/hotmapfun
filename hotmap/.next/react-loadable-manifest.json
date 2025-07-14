@@ -1,0 +1,24 @@
+{
+  "components/VoteModal.tsx -> @solana/web3.js": {
+    "id": "components/VoteModal.tsx -> @solana/web3.js",
+    "files": []
+  },
+  "node_modules/@solana/wallet-adapter-solflare/lib/esm/adapter.js -> @solflare-wallet/sdk": {
+    "id": "node_modules/@solana/wallet-adapter-solflare/lib/esm/adapter.js -> @solflare-wallet/sdk",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_solflare-wallet_sdk_lib_esm_index_js.js"
+    ]
+  },
+  "node_modules/@solana/wallet-adapter-solflare/lib/esm/metamask/wallet.js -> @solflare-wallet/metamask-sdk": {
+    "id": "node_modules/@solana/wallet-adapter-solflare/lib/esm/metamask/wallet.js -> @solflare-wallet/metamask-sdk",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_solflare-wallet_metamask-sdk_lib_esm_index_js.js"
+    ]
+  },
+  "node_modules/@solana/wallet-adapter-torus/lib/esm/adapter.js -> @toruslabs/solana-embed": {
+    "id": "node_modules/@solana/wallet-adapter-torus/lib/esm/adapter.js -> @toruslabs/solana-embed",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_toruslabs_solana-embed_dist_solanaEmbed_esm_js.js"
+    ]
+  }
+}
