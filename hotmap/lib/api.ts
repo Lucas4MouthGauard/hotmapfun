@@ -85,6 +85,7 @@ async function apiRequest<T>(
     })
 
     console.log('📡 API响应状态:', response.status, response.statusText)
+    console.log('📡 API响应头:', Object.fromEntries(response.headers.entries()))
     
     if (!response.ok) {
       const errorText = await response.text()
@@ -98,6 +99,12 @@ async function apiRequest<T>(
     return data
   } catch (error) {
     console.error('❌ API请求失败:', error)
+    console.error('❌ 错误详情:', {
+      message: error instanceof Error ? error.message : '未知错误',
+      stack: error instanceof Error ? error.stack : undefined,
+      url,
+      options
+    })
     return {
       success: false,
       error: error instanceof Error ? error.message : '网络请求失败'
@@ -152,13 +159,19 @@ export const wordsApi = {
     }
     
     return apiRequest(`/words?${searchParams.toString()}`).then(response => {
+      console.log('🔍 处理词条API响应:', response)
+      
       // 处理后端返回的嵌套数据结构
       if (response.success && response.data && typeof response.data === 'object' && 'data' in response.data) {
+        console.log('📦 提取嵌套数据:', response.data.data)
         return {
           ...response,
           data: (response.data as any).data // 提取实际的词条数组
         } as ApiResponse<Word[]>
       }
+      
+      // 如果没有嵌套结构，直接返回
+      console.log('📦 直接返回数据:', response.data)
       return response as ApiResponse<Word[]>
     })
   },

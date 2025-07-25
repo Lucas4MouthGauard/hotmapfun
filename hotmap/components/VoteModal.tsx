@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MemeWord } from '@/lib/types'
 import { CONFIG } from '@/lib/data'
-import { getVoteStatus, getVoteStatusDescription, canVoteFree, canVotePaid } from '@/lib/utils'
+import { getVoteStatus, getVoteStatusDescription, canVoteFree, canVotePaid, getRemainingFreeVotes } from '@/lib/utils'
 import { 
   createConnection, 
   createVoteTransaction, 
@@ -33,6 +33,7 @@ export function VoteModal({ word, onConfirm, onClose, walletAddress }: VoteModal
   const canFree = walletAddress ? canVoteFree(walletAddress) : false
   const canPaid = walletAddress ? canVotePaid(walletAddress) : false
   const hasEnoughBalance = balance !== null && balance >= CONFIG.paidVoteCost
+  const remainingFreeVotes = walletAddress ? getRemainingFreeVotes(walletAddress) : 0
 
   const handleVote = async (isPaid: boolean) => {
     if (!walletAddress) {
@@ -192,7 +193,7 @@ export function VoteModal({ word, onConfirm, onClose, walletAddress }: VoteModal
                 {voteStatus === 'paid_required' && <AlertCircle className="text-yellow-400" size={16} />}
                 {voteStatus === 'daily_limit_reached' && <AlertCircle className="text-red-400" size={16} />}
                 <span className="text-gray-300">
-                  {getVoteStatusDescription(voteStatus)}
+                  {getVoteStatusDescription(voteStatus, walletAddress)}
                 </span>
               </div>
             </div>
@@ -225,7 +226,7 @@ export function VoteModal({ word, onConfirm, onClose, walletAddress }: VoteModal
                 className="w-full vote-button bg-green-500 hover:bg-green-600 text-white flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 <Heart size={20} />
-                <span>免费投票 (剩余免费次数)</span>
+                <span>免费投票 (剩余 {remainingFreeVotes} 次)</span>
               </motion.button>
             ) : null}
 

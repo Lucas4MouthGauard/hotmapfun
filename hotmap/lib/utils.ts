@@ -195,10 +195,29 @@ export function debounce<T extends (...args: any[]) => any>(
   }
 }
 
+// 获取剩余免费投票次数
+export function getRemainingFreeVotes(walletAddress: string): number {
+  if (!walletAddress) return 0
+  
+  const stats = getUserVoteStats(walletAddress)
+  const currentDate = getCurrentDateString()
+  
+  // 如果是新的一天，重置统计
+  if (stats.lastVoteDate !== currentDate) {
+    return CONFIG.freeVotesPerDay
+  }
+  
+  return Math.max(0, CONFIG.freeVotesPerDay - stats.freeVotesUsed)
+}
+
 // 获取投票状态描述
-export function getVoteStatusDescription(status: VoteStatus): string {
+export function getVoteStatusDescription(status: VoteStatus, walletAddress?: string): string {
   switch (status) {
     case VOTE_STATUS.FREE_AVAILABLE:
+      if (walletAddress) {
+        const remaining = getRemainingFreeVotes(walletAddress)
+        return `可以免费投票 (剩余 ${remaining} 次)`
+      }
       return '可以免费投票'
     case VOTE_STATUS.FREE_USED:
       return '免费投票已用完'
