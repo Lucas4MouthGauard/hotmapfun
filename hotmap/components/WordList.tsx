@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Word } from '@/lib/api'
+import { Word } from '@/lib/types'
 import { getHeatColor } from '@/lib/utils'
 import { Heart, TrendingUp } from 'lucide-react'
 

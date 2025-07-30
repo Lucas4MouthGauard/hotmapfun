@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Word } from '@/lib/api'
+import { Word } from '@/lib/types'
 
 interface HeatmapViewProps {
   words: Word[]

@@ -27,11 +27,7 @@ export default function TestApi() {
       }
       
       // 测试API函数
-      const response = await wordsApi.getWords({
-        limit: 5,
-        sort: 'total_votes',
-        order: 'desc'
-      })
+      const response = await wordsApi.getAll()
       
       console.log('🧪 API函数结果:', response)
       setResult(response)

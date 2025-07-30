@@ -5,7 +5,7 @@ import { Wordcloud } from '@visx/wordcloud'
 import { Group } from '@visx/group'
 import { scaleLog } from '@visx/scale'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Word } from '@/lib/api'
+import { Word } from '@/lib/types'
 
 interface ProfessionalWordCloudProps {
   words: Word[]

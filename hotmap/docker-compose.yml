@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # 前端服务
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - BACKEND_PORT=3001
+      - NEXT_PUBLIC_SOLANA_NETWORK=devnet
+      - NEXT_PUBLIC_PROJECT_WALLET=${PROJECT_WALLET:-5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1}
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - meme-network
+
+  # 后端服务
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - SOLANA_NETWORK=devnet
+      - PROJECT_WALLET=${PROJECT_WALLET:-5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1}
+      - JWT_SECRET=${JWT_SECRET:-your_very_long_and_secure_jwt_secret_key_here_minimum_32_characters}
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
+    restart: unless-stopped
+    networks:
+      - meme-network
+
+  # Redis 缓存服务（可选）
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - meme-network
+
+  # PostgreSQL 数据库（可选）
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=meme_hotmap
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-your_secure_password_here}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    restart: unless-stopped
+    networks:
+      - meme-network
+
+  # Nginx 反向代理（生产环境）
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    networks:
+      - meme-network
+
+volumes:
+  redis_data:
+  postgres_data:
+
+networks:
+  meme-network:
+    driver: bridge 

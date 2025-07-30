@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { VoteTransaction } from '@/lib/types'
+import { Transaction } from '@/lib/types'
 import { getUserVoteTransactions } from '@/lib/utils'
 import { History, ExternalLink, Copy, Check } from 'lucide-react'
 

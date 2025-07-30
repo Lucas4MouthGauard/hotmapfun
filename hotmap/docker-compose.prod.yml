@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # 前端服务
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - BACKEND_PORT=3001
+      - NEXT_PUBLIC_SOLANA_NETWORK=${SOLANA_NETWORK:-mainnet-beta}
+      - NEXT_PUBLIC_PROJECT_WALLET=${PROJECT_WALLET}
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - meme-network
+
+  # 后端服务
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - SOLANA_NETWORK=${SOLANA_NETWORK:-mainnet-beta}
+      - PROJECT_WALLET=${PROJECT_WALLET}
+      - JWT_SECRET=${JWT_SECRET}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:3001}
+    restart: unless-stopped
+    networks:
+      - meme-network
+
+  # Nginx 反向代理
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    networks:
+      - meme-network
+
+networks:
+  meme-network:
+    driver: bridge 

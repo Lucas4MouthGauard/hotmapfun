@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { TrendingUp, Award, Users } from 'lucide-react'
-import { Word } from '@/lib/api'
+import { Word } from '@/lib/types'
 
 interface StatsProps {
   words: Word[]

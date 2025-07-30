@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Word } from '@/lib/api'
+import { Word } from '@/lib/types'
 import { wordsApi, votesApi } from '@/lib/api'
 import { VoteModal } from '@/components/VoteModal'
 import { TransactionHistory } from '@/components/TransactionHistory'
@@ -31,31 +31,24 @@ export default function HomePage() {
     setError(null)
     
     try {
-      const response = await wordsApi.getWords({
-        limit: 100,
-        sort: 'total_votes',
-        order: 'desc'
-      })
+      const response = await wordsApi.getAll()
       
       console.log('🔍 API响应详情:', {
-        success: response?.success,
-        hasData: !!response?.data,
-        dataType: typeof response?.data,
-        isArray: Array.isArray(response?.data),
-        dataLength: response?.data?.length,
-        error: response?.error
+        hasData: !!response,
+        dataType: typeof response,
+        isArray: Array.isArray(response),
+        dataLength: Array.isArray(response) ? response.length : 0
       })
       
-      if (response && response.success && response.data && Array.isArray(response.data)) {
-        console.log('✅ 成功加载词条数据，数量:', response.data.length)
-        setWords(response.data)
+      if (response && Array.isArray(response)) {
+        console.log('✅ 成功加载词条数据，数量:', response.length)
+        setWords(response)
       } else {
         console.error('❌ 加载词条失败:', {
           response,
-          error: response?.error,
-          dataType: typeof response?.data
+          dataType: typeof response
         })
-        setError(response?.error || '加载词条失败')
+        setError('加载词条失败')
         setWords([])
       }
     } catch (err) {
@@ -78,7 +71,8 @@ export default function HomePage() {
       word: word.word,
       votes: word.total_votes || 0,
       percentage: word.percentage || 0,
-      category: word.category
+      category: word.category,
+      emoji: word.emoji || '🔥'
     }
     setSelectedWord(memeWord)
     setShowVoteModal(true)
@@ -98,14 +92,13 @@ export default function HomePage() {
       
       // 调用投票API
       const voteResponse = await votesApi.submitVote({
-        wallet_address: publicKey.toString(),
-        word_id: selectedWord.id,
-        is_paid: isPaid,
-        tx_signature: transactionSignature
+        wordId: selectedWord.id,
+        walletAddress: publicKey.toString(),
+        voteType: isPaid ? 'paid' : 'free'
       })
       
-      if (voteResponse.success) {
-        console.log('投票成功:', voteResponse.data)
+      if (voteResponse) {
+        console.log('投票成功:', voteResponse)
         
         // 更新本地投票统计
         recordVote(publicKey.toString(), isPaid, transactionSignature)
@@ -114,8 +107,8 @@ export default function HomePage() {
         await loadWords()
         alert('投票成功！')
       } else {
-        console.error('投票失败:', voteResponse.error)
-        alert(`投票失败: ${voteResponse.error}`)
+        console.error('投票失败')
+        alert('投票失败，请重试')
       }
       
       setShowVoteModal(false)

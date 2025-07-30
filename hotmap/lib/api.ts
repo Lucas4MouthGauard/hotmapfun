@@ -1,277 +1,149 @@
-const API_BASE_URL = 'http://localhost:3001/api'
+import { getApiUrl, isVercelEnvironment } from './vercel'
 
-export interface ApiResponse<T = any> {
-  success: boolean
-  message?: string
-  data?: T
-  error?: string
-}
-
-export interface User {
-  id: number
-  wallet_address: string
-  total_votes: number
-  total_paid_votes: number
-  total_spent_sol: number
-  first_vote_at?: string
-  last_vote_at?: string
-  created_at: string
-  updated_at: string
-}
-
-export interface Word {
-  id: number
-  word: string
-  category: string
-  description?: string
-  total_votes: number
-  free_votes: number
-  paid_votes: number
-  current_rank: number
-  percentage?: number
-  heatValue?: number
-  rank?: number
-}
-
-export interface VoteRequest {
-  wallet_address: string
-  word_id: number
-  is_paid: boolean
-  tx_signature?: string
-}
-
-export interface VoteResponse {
-  vote: any
-  user: User
-  word: Word
-  todayStats: {
-    totalVotes: number
-    freeVotes: number
-    paidVotes: number
+// API 基础配置
+const API_CONFIG = {
+  baseUrl: getApiUrl(),
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
   }
 }
 
-export interface TodayVoteStatus {
-  todayStats: {
-    totalVotes: number
-    freeVotes: number
-    paidVotes: number
-    remainingFreeVotes: number
-    remainingTotalVotes: number
-  }
-  todayVotes: any[]
-  config: {
-    freeVotesPerDay: number
-    maxVotesPerDay: number
-    paidVoteCost: number
-  }
-}
-
-// API 请求工具函数
-async function apiRequest<T>(
-  endpoint: string, 
-  options: RequestInit = {}
-): Promise<ApiResponse<T>> {
-  const url = `${API_BASE_URL}${endpoint}`
-  console.log('🌐 API请求:', url, options)
+// 请求拦截器
+const request = async (url: string, options: RequestInit = {}) => {
+  const fullUrl = url.startsWith('http') ? url : `${API_CONFIG.baseUrl}${url}`
   
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-      ...options,
-    })
+  const config: RequestInit = {
+    ...options,
+    headers: {
+      ...API_CONFIG.headers,
+      ...options.headers,
+    },
+    signal: AbortSignal.timeout(API_CONFIG.timeout),
+  }
 
-    console.log('📡 API响应状态:', response.status, response.statusText)
-    console.log('📡 API响应头:', Object.fromEntries(response.headers.entries()))
+  try {
+    const response = await fetch(fullUrl, config)
     
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error('❌ API错误响应:', errorText)
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
-
-    const data = await response.json()
-    console.log('✅ API成功响应:', data)
     
-    return data
+    return response
   } catch (error) {
-    console.error('❌ API请求失败:', error)
-    console.error('❌ 错误详情:', {
-      message: error instanceof Error ? error.message : '未知错误',
-      stack: error instanceof Error ? error.stack : undefined,
-      url,
-      options
-    })
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : '网络请求失败'
-    }
+    console.error('API request failed:', error)
+    throw error
   }
 }
 
-// 用户认证API
-export const authApi = {
-  // 用户登录/注册
-  login: (walletAddress: string): Promise<ApiResponse<{ user: User }>> => {
-    return apiRequest('/auth/login', {
+// API 客户端
+export const apiClient = {
+  // GET 请求
+  async get<T>(url: string): Promise<T> {
+    const response = await request(url, { method: 'GET' })
+    return response.json()
+  },
+
+  // POST 请求
+  async post<T>(url: string, data?: any): Promise<T> {
+    const response = await request(url, {
       method: 'POST',
-      body: JSON.stringify({ wallet_address: walletAddress })
+      body: data ? JSON.stringify(data) : undefined,
     })
+    return response.json()
   },
 
-  // 获取用户信息
-  getUser: (walletAddress: string): Promise<ApiResponse<{ user: User }>> => {
-    return apiRequest(`/auth/user/${walletAddress}`)
+  // PUT 请求
+  async put<T>(url: string, data?: any): Promise<T> {
+    const response = await request(url, {
+      method: 'PUT',
+      body: data ? JSON.stringify(data) : undefined,
+    })
+    return response.json()
   },
 
-  // 获取用户投票统计
-  getUserStats: (walletAddress: string, date?: string): Promise<ApiResponse<{
-    user: User
-    todayStats: any
-    voteHistory: any[]
-  }>> => {
-    const params = date ? `?date=${date}` : ''
-    return apiRequest(`/auth/user/${walletAddress}/stats${params}`)
+  // DELETE 请求
+  async delete<T>(url: string): Promise<T> {
+    const response = await request(url, { method: 'DELETE' })
+    return response.json()
+  },
+}
+
+// 健康检查
+export const healthCheck = async () => {
+  try {
+    const response = await apiClient.get('/health')
+    return response
+  } catch (error) {
+    console.error('Health check failed:', error)
+    return { status: 'unhealthy', error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
 
-// 词条API
+// 词条相关 API
 export const wordsApi = {
   // 获取所有词条
-  getWords: (params?: {
-    page?: number
-    limit?: number
-    search?: string
-    category?: string
-    sort?: string
-    order?: 'asc' | 'desc'
-  }): Promise<ApiResponse<Word[]>> => {
-    const searchParams = new URLSearchParams()
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined) {
-          searchParams.append(key, value.toString())
-        }
-      })
-    }
-    
-    return apiRequest(`/words?${searchParams.toString()}`).then(response => {
-      console.log('🔍 处理词条API响应:', response)
-      
-      // 处理后端返回的嵌套数据结构
-      if (response.success && response.data && typeof response.data === 'object' && 'data' in response.data) {
-        console.log('📦 提取嵌套数据:', response.data.data)
-        return {
-          ...response,
-          data: (response.data as any).data // 提取实际的词条数组
-        } as ApiResponse<Word[]>
-      }
-      
-      // 如果没有嵌套结构，直接返回
-      console.log('📦 直接返回数据:', response.data)
-      return response as ApiResponse<Word[]>
-    })
-  },
-
-  // 获取单个词条
-  getWord: (id: number): Promise<ApiResponse<{ word: Word; voteHistory: any[] }>> => {
-    return apiRequest(`/words/${id}`)
-  },
-
+  getAll: () => apiClient.get('/api/words'),
+  
   // 获取热力图数据
-  getHeatmapData: (limit: number = 100): Promise<ApiResponse<Word[]>> => {
-    return apiRequest(`/words/heatmap/top?limit=${limit}`)
-  },
-
+  getHeatmap: () => apiClient.get('/api/words/heatmap/top'),
+  
   // 获取分类列表
-  getCategories: (): Promise<ApiResponse<{
-    categories: Array<{
-      category: string
-      word_count: number
-      total_votes: number
-    }>
-  }>> => {
-    return apiRequest('/words/categories/list')
-  }
+  getCategories: () => apiClient.get('/api/words/categories/list'),
+  
+  // 按分类获取词条
+  getByCategory: (category: string) => apiClient.get(`/api/words/category/${category}`),
 }
 
-// 投票API
+// 投票相关 API
 export const votesApi = {
-  // 提交投票
-  submitVote: (voteData: VoteRequest): Promise<ApiResponse<VoteResponse>> => {
-    return apiRequest('/votes', {
-      method: 'POST',
-      body: JSON.stringify(voteData)
-    })
-  },
-
   // 获取用户今日投票状态
-  getTodayVoteStatus: (walletAddress: string): Promise<ApiResponse<TodayVoteStatus>> => {
-    return apiRequest(`/votes/user/${walletAddress}/today`)
-  }
+  getUserVotes: (walletAddress: string) => 
+    apiClient.get(`/api/votes/user/${walletAddress}/today`),
+  
+  // 提交投票
+  submitVote: (data: { wordId: number; walletAddress: string; voteType: 'free' | 'paid' }) =>
+    apiClient.post('/api/votes', data),
+  
+  // 获取投票统计
+  getStats: () => apiClient.get('/api/stats/overview'),
 }
 
-// 统计API
+// 用户相关 API
+export const authApi = {
+  // 用户登录
+  login: (walletAddress: string) => 
+    apiClient.post('/api/auth/login', { walletAddress }),
+  
+  // 获取用户信息
+  getUser: (walletAddress: string) => 
+    apiClient.get(`/api/auth/user/${walletAddress}`),
+}
+
+// 统计相关 API
 export const statsApi = {
-  // 获取总体统计
-  getOverview: (): Promise<ApiResponse<{
-    users: any
-    words: any
-    today: any
-    revenue: any
-  }>> => {
-    return apiRequest('/stats/overview')
-  },
-
-  // 获取每日统计
-  getDailyStats: (days: number = 30): Promise<ApiResponse<any[]>> => {
-    return apiRequest(`/stats/daily?days=${days}`)
-  },
-
-  // 获取热门词条排行
-  getTopWords: (limit: number = 20, days: number = 7): Promise<ApiResponse<Word[]>> => {
-    return apiRequest(`/stats/top-words?limit=${limit}&days=${days}`)
-  },
-
-  // 获取用户活跃度排行
-  getTopUsers: (limit: number = 20, days: number = 30): Promise<ApiResponse<any[]>> => {
-    return apiRequest(`/stats/top-users?limit=${limit}&days=${days}`)
-  }
+  // 获取概览统计
+  getOverview: () => apiClient.get('/api/stats/overview'),
+  
+  // 获取趋势数据
+  getTrends: () => apiClient.get('/api/stats/trends'),
+  
+  // 获取排行榜
+  getLeaderboard: () => apiClient.get('/api/stats/leaderboard'),
 }
 
-// 交易API
-export const transactionsApi = {
-  // 获取交易记录
-  getTransactions: (params?: {
-    wallet_address?: string
-    page?: number
-    limit?: number
-  }): Promise<ApiResponse<any[]>> => {
-    const searchParams = new URLSearchParams()
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined) {
-          searchParams.append(key, value.toString())
-        }
-      })
-    }
-    
-    return apiRequest(`/transactions?${searchParams.toString()}`)
-  },
+// 导出所有 API
+export const api = {
+  healthCheck,
+  words: wordsApi,
+  votes: votesApi,
+  auth: authApi,
+  stats: statsApi,
+}
 
-  // 验证交易签名
-  verifyTransaction: (txData: {
-    tx_signature: string
-    from_address: string
-    to_address: string
-    amount_sol: number
-  }): Promise<ApiResponse<any>> => {
-    return apiRequest('/transactions/verify', {
-      method: 'POST',
-      body: JSON.stringify(txData)
-    })
-  }
-} 
+// 环境信息
+export const getApiInfo = () => ({
+  baseUrl: API_CONFIG.baseUrl,
+  isVercel: isVercelEnvironment(),
+  environment: process.env.NODE_ENV,
+}) 

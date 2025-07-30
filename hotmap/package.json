@@ -7,7 +7,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "docker:build": "docker build -t meme-hotmap .",
+    "docker:run": "docker run -p 3000:3000 -p 3001:3001 meme-hotmap",
+    "docker:compose": "docker-compose up -d",
+    "docker:compose:down": "docker-compose down",
+    "docker:compose:logs": "docker-compose logs -f",
+    "deploy": "chmod +x deploy.sh && ./deploy.sh",
+    "setup": "chmod +x setup.sh && ./setup.sh",
+    "vercel:dev": "vercel dev",
+    "vercel:deploy": "vercel --prod",
+    "vercel:build": "vercel build"
   },
   "dependencies": {
     "@solana/wallet-adapter-backpack": "^0.1.14",
