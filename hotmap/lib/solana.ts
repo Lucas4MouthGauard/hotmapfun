@@ -13,7 +13,7 @@ export function createConnection(): Connection {
   // 根据配置选择网络
   let endpoint: string
   
-  if (CONFIG.network === 'mainnet-beta') {
+  if (process.env.NEXT_PUBLIC_SOLANA_NETWORK === 'mainnet-beta') {
     endpoint = 'https://api.mainnet-beta.solana.com'
   } else {
     // 使用更可靠的 devnet 端点，增加备用端点
@@ -25,7 +25,7 @@ export function createConnection(): Connection {
     endpoint = devnetEndpoints[0] // 使用第一个作为默认
   }
   
-  console.log('使用 Solana 网络:', CONFIG.network, '端点:', endpoint)
+  console.log('使用 Solana 网络:', process.env.NEXT_PUBLIC_SOLANA_NETWORK, '端点:', endpoint)
   
   return new Connection(endpoint, {
     commitment: 'confirmed',
@@ -40,7 +40,7 @@ export function createConnection(): Connection {
 // 验证项目方钱包地址
 export function validateProjectWallet(): boolean {
   try {
-    new PublicKey(CONFIG.projectWallet)
+    new PublicKey(CONFIG.PROJECT_WALLET)
     return true
   } catch {
     return false
@@ -50,14 +50,14 @@ export function validateProjectWallet(): boolean {
 // 创建付费投票交易
 export async function createVoteTransaction(
   fromPublicKey: PublicKey,
-  amount: number = CONFIG.paidVoteCost
+  amount: number = CONFIG.PAID_VOTE_COST
 ): Promise<Transaction> {
   // 验证项目方钱包地址
   if (!validateProjectWallet()) {
     throw new Error('项目方钱包地址无效，请检查配置')
   }
 
-  const toPublicKey = new PublicKey(CONFIG.projectWallet)
+  const toPublicKey = new PublicKey(CONFIG.PROJECT_WALLET)
   const connection = createConnection()
   
   // 获取最新的 blockhash
@@ -162,7 +162,7 @@ export async function verifyTransaction(
 export async function checkWalletBalance(
   connection: Connection,
   publicKey: PublicKey,
-  requiredAmount: number = CONFIG.paidVoteCost
+  requiredAmount: number = CONFIG.PAID_VOTE_COST
 ): Promise<boolean> {
   try {
     const balance = await getWalletBalance(connection, publicKey)

@@ -114,4 +114,30 @@ temp/
 *.sqlite3
 
 # Redis dump
-dump.rdb 
+dump.rdb
+
+# Docker
+.dockerignore
+
+# SSL certificates
+ssl/
+*.pem
+*.key
+*.crt
+
+# Backup files
+*.backup
+*.bak
+*.sql
+
+# Deployment
+deploy.log
+deployment.log
+
+# Monitoring
+monitoring/
+metrics/
+
+# Local development
+.local/
+local/ 

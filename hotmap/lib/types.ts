@@ -126,6 +126,23 @@ export interface Config {
   PROJECT_WALLET: string
 }
 
+// 投票统计类型
+export interface VoteStats {
+  totalVotes: number
+  freeVotesUsed: number
+  paidVotesUsed: number
+  lastVoteTime: number
+  lastVoteDate: string // YYYY-MM-DD 格式
+}
+
+// 投票交易类型
+export interface VoteTransaction {
+  signature: string
+  amount: number
+  status: 'pending' | 'confirmed' | 'failed'
+  timestamp: number
+}
+
 // 环境配置类型
 export interface EnvironmentConfig {
   isVercel: boolean

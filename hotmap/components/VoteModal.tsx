@@ -32,7 +32,7 @@ export function VoteModal({ word, onConfirm, onClose, walletAddress }: VoteModal
   const voteStatus = walletAddress ? getVoteStatus(walletAddress) : null
   const canFree = walletAddress ? canVoteFree(walletAddress) : false
   const canPaid = walletAddress ? canVotePaid(walletAddress) : false
-  const hasEnoughBalance = balance !== null && balance >= CONFIG.paidVoteCost
+  const hasEnoughBalance = balance !== null && balance >= CONFIG.PAID_VOTE_COST
   const remainingFreeVotes = walletAddress ? getRemainingFreeVotes(walletAddress) : 0
 
   const handleVote = async (isPaid: boolean) => {
@@ -42,7 +42,7 @@ export function VoteModal({ word, onConfirm, onClose, walletAddress }: VoteModal
     }
 
     if (isPaid && !hasEnoughBalance) {
-      setError(`余额不足，需要 ${CONFIG.paidVoteCost} SOL，当前余额 ${balance !== null ? balance.toFixed(4) : '未知'} SOL`)
+      setError(`余额不足，需要 ${CONFIG.PAID_VOTE_COST} SOL，当前余额 ${balance !== null ? balance.toFixed(4) : '未知'} SOL`)
       return
     }
 
@@ -62,12 +62,12 @@ export function VoteModal({ word, onConfirm, onClose, walletAddress }: VoteModal
         // 再次检查余额（双重保险）
         const hasEnoughBalance = await checkWalletBalance(connection, publicKey)
         if (!hasEnoughBalance) {
-          throw new Error(`余额不足，需要 ${CONFIG.paidVoteCost} SOL`)
+          throw new Error(`余额不足，需要 ${CONFIG.PAID_VOTE_COST} SOL`)
         }
 
         setTransactionStep('创建交易...')
         
-        console.log('创建交易，项目方钱包:', CONFIG.projectWallet)
+        console.log('创建交易，项目方钱包:', CONFIG.PROJECT_WALLET)
         
         // 创建交易
         const transaction = await createVoteTransaction(publicKey)
@@ -243,20 +243,20 @@ export function VoteModal({ word, onConfirm, onClose, walletAddress }: VoteModal
                 }`}
               >
                 <Coins size={20} />
-                <span>付费投票 ({CONFIG.paidVoteCost} SOL)</span>
+                <span>付费投票 ({CONFIG.PAID_VOTE_COST} SOL)</span>
               </motion.button>
             ) : null}
 
             {voteStatus === 'daily_limit_reached' && (
               <div className="text-center text-red-400 text-sm">
-                今日投票次数已达上限 ({CONFIG.maxVotesPerDay} 次)
+                今日投票次数已达上限 ({CONFIG.MAX_VOTES_PER_DAY} 次)
               </div>
             )}
 
             <div className="text-center text-xs text-gray-400 mt-4 space-y-1">
-              <p>• 每个钱包每天最多投票 {CONFIG.maxVotesPerDay} 次</p>
-              <p>• 免费投票每天 {CONFIG.freeVotesPerDay} 次</p>
-              <p>• 付费投票 {CONFIG.paidVoteCost} SOL/次</p>
+              <p>• 每个钱包每天最多投票 {CONFIG.MAX_VOTES_PER_DAY} 次</p>
+              <p>• 免费投票每天 {CONFIG.FREE_VOTES_PER_DAY} 次</p>
+              <p>• 付费投票 {CONFIG.PAID_VOTE_COST} SOL/次</p>
               <p>• 付费投票将转账到项目方钱包</p>
               <p>• 投票后无法撤销</p>
             </div>

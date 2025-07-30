@@ -1,4 +1,4 @@
-import { MemeWord, VoteStats, VoteTransaction } from './types'
+import { MemeWord, Transaction, VoteStats, VoteTransaction } from './types'
 import { CONFIG, STORAGE_KEYS, VOTE_STATUS, VoteStatus } from './data'
 
 // 计算热度颜色
@@ -102,12 +102,12 @@ export function getVoteStatus(walletAddress: string): VoteStatus {
   }
   
   // 检查是否达到每日上限
-  if (stats.totalVotes >= CONFIG.maxVotesPerDay) {
+  if (stats.totalVotes >= CONFIG.MAX_VOTES_PER_DAY) {
     return VOTE_STATUS.DAILY_LIMIT_REACHED
   }
   
   // 检查免费投票是否可用
-  if (stats.freeVotesUsed < CONFIG.freeVotesPerDay) {
+  if (stats.freeVotesUsed < CONFIG.FREE_VOTES_PER_DAY) {
     return VOTE_STATUS.FREE_AVAILABLE
   }
   
@@ -152,7 +152,7 @@ export function recordVote(walletAddress: string, isPaid: boolean = false, trans
   if (isPaid && transactionSignature) {
     const transaction: VoteTransaction = {
       signature: transactionSignature,
-      amount: CONFIG.paidVoteCost,
+      amount: CONFIG.PAID_VOTE_COST,
       status: 'confirmed',
       timestamp: currentTime
     }
@@ -204,10 +204,10 @@ export function getRemainingFreeVotes(walletAddress: string): number {
   
   // 如果是新的一天，重置统计
   if (stats.lastVoteDate !== currentDate) {
-    return CONFIG.freeVotesPerDay
+    return CONFIG.FREE_VOTES_PER_DAY
   }
   
-  return Math.max(0, CONFIG.freeVotesPerDay - stats.freeVotesUsed)
+  return Math.max(0, CONFIG.FREE_VOTES_PER_DAY - stats.freeVotesUsed)
 }
 
 // 获取投票状态描述

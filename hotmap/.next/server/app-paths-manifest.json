@@ -1,3 +1,8 @@
 {
-  "/page": "app/page.js"
+  "/_not-found/page": "app/_not-found/page.js",
+  "/page": "app/page.js",
+  "/okx-wallet/page": "app/okx-wallet/page.js",
+  "/api/health/route": "app/api/health/route.js",
+  "/test-api/page": "app/test-api/page.js",
+  "/admin/page": "app/admin/page.js"
 }
