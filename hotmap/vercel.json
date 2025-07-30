@@ -7,16 +7,6 @@
       "use": "@vercel/next"
     }
   ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "https://your-backend-domain.com/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
   "env": {
     "NEXT_PUBLIC_SOLANA_NETWORK": "mainnet-beta",
     "NEXT_PUBLIC_PROJECT_WALLET": "@project_wallet"
@@ -64,19 +54,6 @@
           "value": "Content-Type, Authorization"
         }
       ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "https://your-backend-domain.com/api/$1"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/health",
-      "destination": "/api/health",
-      "permanent": false
     }
   ]
 } 
